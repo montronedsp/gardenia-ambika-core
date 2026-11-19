@@ -36,11 +36,13 @@ SPDX-License-Identifier = "GPL-3.0-or-later"
 # Remaining project files (MontroneDSP adaptations, ABI, tests, docs, build).
 [[annotations]]
 path = [
+  ".gitattributes",
   ".github/**",
   ".gitignore",
   "BUILDING.md",
   "CMakeLists.txt",
   "README.md",
+  "REUSE.toml",
   "THIRD_PARTY_NOTICES.md",
   "docs/**",
   "include/gardenia_core/CutoffControlMapping.h",
@@ -51,6 +53,7 @@ path = [
   "include/gardenia_core/gardenia_core_types.h",
   "include/gardenia_core/gardenia_core_version.h",
   "scripts/**",
+  "sonar-project.properties",
   "src/api/**",
   "src/internal/**",
   "tests/**",

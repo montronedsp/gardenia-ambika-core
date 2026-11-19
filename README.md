@@ -26,6 +26,9 @@ On Windows, Visual Studio 2022 is recommended.
 
 See [BUILDING.md](BUILDING.md) for build instructions.
 
+SonarQube Cloud CFamily analysis (compilation database + coverage) is
+documented in [docs/SONARQUBE_CFAMILY_SETUP.md](docs/SONARQUBE_CFAMILY_SETUP.md).
+
 ## Integration
 
 The library exposes a versioned C interface through

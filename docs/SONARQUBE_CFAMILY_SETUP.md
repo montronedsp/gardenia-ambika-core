@@ -3,8 +3,8 @@
 Project:
 [https://sonarcloud.io/project/overview?id=montronedsp_gardenia-ambika-core](https://sonarcloud.io/project/overview?id=montronedsp_gardenia-ambika-core)
 
-Organization key (verified from the public SonarCloud URL and project id prefix):
-`montronedsp`
+Organization key (verified by secretless OIDC exchange on PR analysis):
+`montronedsp-1`
 
 Project key: `montronedsp_gardenia-ambika-core`
 
@@ -160,6 +160,47 @@ coverage XML.
 | Repository not bound | Bind the GitHub repo to the SonarQube project via GitHub integration |
 | Project key mismatch | Confirm `montronedsp_gardenia-ambika-core` is bound to this repository |
 | HTTP 403 after successful exchange | Organization IP allow-list excludes the runner |
+
+## Verification record (secretless OIDC)
+
+| Field | Value |
+| --- | --- |
+| Main SHA at OIDC merge | `fe5950dcc72f61ab469137cf2df531957a4df0b8` (PR #8) |
+| Docs / org-key follow-up | open PR #9 at tip `7d302a1b91a792913c508f34d51d222c4c95ab3e` |
+| Auth action | `SonarSource/sonarqube-auth-action@b372e2c2930aadfcc4f4399446da1e12772709ad` (v1.2) |
+| Scanner action | `SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4` (v8.5.0) |
+| Scanner CLI (runner) | 8.4.0-build.16527 |
+| Runner | `ubuntu-24.04` |
+| CMake / Clang | Clang 18.1.3 (CMake Ninja Release with `CMAKE_EXPORT_COMPILE_COMMANDS=ON`) |
+| Compilation database | `entries=13`, `unique_translation_units=12`, VALIDATION PASS |
+| Portable CTest | 7/7 passed |
+| Coverage (gcovr) | lines 49.2% (1010/2052), functions 60.8%, branches 31.2% |
+| OIDC exchange | PASS — org `montronedsp-1`, project `montronedsp_gardenia-ambika-core`, 30-minute token |
+| CFamily mode | Compile-Commands (Manual Configuration) |
+| Main analysis URL | https://sonarcloud.io/dashboard?id=montronedsp_gardenia-ambika-core&branch=main |
+| Main workflow run | https://github.com/montronedsp/gardenia-ambika-core/actions/runs/44591096875 |
+| PR #8 analysis URL | https://sonarcloud.io/dashboard?id=montronedsp_gardenia-ambika-core&pullRequest=8 |
+| PR #9 analysis URL | https://sonarcloud.io/dashboard?id=montronedsp_gardenia-ambika-core&pullRequest=9 |
+| Quality Gate | OK on main and on PRs #8 / #9 |
+| Main coverage / ncloc | coverage 43.3%, ncloc 21129, bugs 0, vulnerabilities 0, code smells 3 |
+| Automatic Analysis | Disabled (`autoscanEnabled=false`; `ciName=Github Actions`) |
+| Remaining admin note | No interactive SonarCloud admin browser session was available; settings verified via public SonarCloud APIs after successful CI upload |
+
+### Verdict snapshot
+
+```text
+AUTOMATIC ANALYSIS DISABLED: YES
+SECRETLESS OIDC ENABLED: YES
+GITHUB PROJECT BINDING: PASS
+OIDC TOKEN EXCHANGE: PASS
+COMPILATION DATABASE: PASS
+C++ ANALYSIS: PASS
+COVERAGE IMPORT: PASS
+MAIN ANALYSIS: PASS
+PR ANALYSIS: PASS
+QUALITY GATE: PASS
+EXISTING CI REGRESSIONS: NONE
+```
 
 ## Related docs
 

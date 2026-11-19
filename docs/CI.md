@@ -42,3 +42,11 @@ Locally (Python 3 + the `reuse` package):
 ```powershell
 python -m reuse lint
 ```
+
+## SonarQube Cloud CFamily
+
+Compiler-aware analysis lives in
+[SONARQUBE_CFAMILY_SETUP.md](SONARQUBE_CFAMILY_SETUP.md) and
+`.github/workflows/sonarqube-cfamily.yml`. It builds a Clang/Ninja compilation
+database and a separate GCC coverage report, then runs the pinned SonarScanner
+action. It does not replace the GCC/Clang/MSVC qualification jobs above.

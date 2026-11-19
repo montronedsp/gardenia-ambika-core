@@ -126,6 +126,7 @@ foreach(_gardenia_target
     GardeniaCoreAbiStatic
     GardeniaCoreFuzzGoldenTests
     GardeniaCoreMixerTests
+    GardeniaCoreVoiceOrderingTests
     GardeniaCoreJuceScan
     GardeniaCoreCompileSmoke
     GardeniaCoreSynthesisGoldenTests

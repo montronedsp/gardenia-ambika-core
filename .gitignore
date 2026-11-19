@@ -8,6 +8,17 @@ CMakeCache.txt
 Testing/
 cmake-build-*/
 build/abi/
+compile_commands.json
+
+# Coverage / Sonar local artifacts
+*.gcda
+*.gcno
+*.gcov
+coverage*.xml
+.scannerwork/
+.sonar/
+coverage-sonar.xml
+.gcovr-venv/
 
 # Compiled / link artefacts
 *.obj

@@ -3,8 +3,8 @@
 Project:
 [https://sonarcloud.io/project/overview?id=montronedsp_gardenia-ambika-core](https://sonarcloud.io/project/overview?id=montronedsp_gardenia-ambika-core)
 
-Organization key (verified from the public SonarCloud URL and project id prefix):
-`montronedsp`
+Organization key (verified by secretless OIDC exchange on PR analysis):
+`montronedsp-1`
 
 Project key: `montronedsp_gardenia-ambika-core`
 
@@ -160,6 +160,47 @@ coverage XML.
 | Repository not bound | Bind the GitHub repo to the SonarQube project via GitHub integration |
 | Project key mismatch | Confirm `montronedsp_gardenia-ambika-core` is bound to this repository |
 | HTTP 403 after successful exchange | Organization IP allow-list excludes the runner |
+
+## Verification record (secretless OIDC)
+
+| Field | Value |
+| --- | --- |
+| Main SHA at branch point | `cee0c91e9591c213b079658d67f9a334910edb08` |
+| Workflow / docs SHA | `e9709fcd5d3f1de68f6f0f8e28bd41aa1e97aceb` (org-key follow-up may supersede) |
+| Auth action | `SonarSource/sonarqube-auth-action@b372e2c2930aadfcc4f4399446da1e12772709ad` (v1.2) |
+| Scanner action | `SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4` (v8.5.0) |
+| Scanner CLI (runner) | 8.4.0-build.16527 |
+| Runner | `ubuntu-24.04` |
+| CMake / Clang | CMake (runner image) / Clang 18.1.3 |
+| Compilation database | `entries=13`, `unique_translation_units=12`, VALIDATION PASS |
+| Portable CTest | 7/7 passed |
+| Coverage (gcovr) | lines 49.2% (1010/2052), functions 60.8%, branches 31.2% |
+| OIDC exchange | PASS — org `montronedsp-1`, project `montronedsp_gardenia-ambika-core`, 30-minute token |
+| CFamily mode | Compile-Commands (Manual Configuration) |
+| PR analysis URL | https://sonarcloud.io/dashboard?id=montronedsp_gardenia-ambika-core&pullRequest=8 |
+| PR Quality Gate | OK (`alert_status=OK`, 0 bugs / vulnerabilities / code smells on PR) |
+| PR coverage measure | 43.3% (Sonar aggregated) |
+| Workflow run | https://github.com/montronedsp/gardenia-ambika-core/actions/runs/44590911099 |
+| Pull request | https://github.com/montronedsp/gardenia-ambika-core/pull/8 |
+| Automatic Analysis | Disabled (`autoscanEnabled=false` via SonarCloud component navigation API) |
+| Main-branch CI scan | Pending merge of this PR (last main revision analysis still `cee0c91`) |
+| Remaining admin note | Confirm Analysis Method UI still shows CI-only after merge; no SonarCloud admin browser session was available during this mission |
+
+### Verdict snapshot
+
+```text
+AUTOMATIC ANALYSIS DISABLED: YES
+SECRETLESS OIDC ENABLED: YES
+GITHUB PROJECT BINDING: PASS
+OIDC TOKEN EXCHANGE: PASS
+COMPILATION DATABASE: PASS
+C++ ANALYSIS: PASS
+COVERAGE IMPORT: PASS
+MAIN ANALYSIS: PENDING
+PR ANALYSIS: PASS
+QUALITY GATE: PASS
+EXISTING CI REGRESSIONS: NONE
+```
 
 ## Related docs
 

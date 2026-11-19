@@ -11,7 +11,8 @@ Project key: `montronedsp_gardenia-ambika-core`
 ## Analysis mode
 
 Canonical analysis is **CI-based SonarScanner** with a CMake-generated
-compilation database. It is not Automatic Analysis.
+compilation database (**Manual Configuration**). It is not Automatic Analysis
+and it is not CFamily Automatic Configuration.
 
 Before the first authenticated CI scan succeeds as the only analysis path:
 
@@ -22,6 +23,41 @@ Before the first authenticated CI scan succeeds as the only analysis path:
 Automatic Analysis and the CFamily scanner must not run together for the same
 project. Existing GCC/Clang/MSVC workflows stay unchanged; Sonar complements
 them and does not replace them.
+
+## Secretless GitHub Actions authentication (OIDC)
+
+CI authenticates with SonarSource's secretless OIDC exchange. No long-lived
+GitHub `SONAR_TOKEN` secret is required for this workflow.
+
+Pinned auth action:
+`SonarSource/sonarqube-auth-action@b372e2c2930aadfcc4f4399446da1e12772709ad`
+(v1.2).
+
+Pinned scanner action:
+`SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4`
+(v8.5.0).
+
+Prerequisites (organization / project administrators):
+
+1. Bind GitHub repository `montronedsp/gardenia-ambika-core` to SonarQube
+   project `montronedsp_gardenia-ambika-core` through the GitHub integration.
+2. Enable **Secretless analysis for GitHub Actions** in the SonarQube Cloud
+   organization settings (separate from disabling project Automatic Analysis).
+3. Ensure the Sonar job has `permissions: contents: read` and
+   `id-token: write`.
+
+The workflow requests a short-lived project-scoped token immediately before the
+scanner (`export-env: false`), then passes
+`steps.sonar-auth.outputs.sonar-token` only to the scan step together with the
+OIDC-resolved organization and project key.
+
+Fork pull requests do not receive `id-token: write`. The Sonar job is skipped
+for forks (`pull_request_target` is not used). Compiler and REUSE workflows
+still run.
+
+Do not create or commit an analysis token for this pipeline. Do not revert to a
+stored `SONAR_TOKEN` unless secretless analysis is organizationally unavailable
+and an administrator explicitly decides otherwise.
 
 ## Compilation database
 
@@ -41,6 +77,8 @@ python3 scripts/ci/validate-compile-commands.py build/sonar/compile_commands.jso
 
 The scanner must run on the same runner and checkout that produced
 `build/sonar/compile_commands.json`. Do not copy a Windows database onto Linux.
+Do not switch to CFamily Automatic Configuration to avoid maintaining the
+database.
 
 Production translation units that instantiate the header-only DSP include
 `src/api/gardenia_core_api.cpp` and `src/internal/gardenia_core_dummy.cpp`, plus
@@ -58,7 +96,10 @@ the portable test executables that include the DSP headers.
 
 Workflow: [.github/workflows/sonarqube-cfamily.yml](../.github/workflows/sonarqube-cfamily.yml)
 
-Pinned scanner action: `SonarSource/sonarqube-scan-action@59202af…` (v8.5.0).
+The workflow also passes organization, project key, compile-commands path, and
+coverage path as scanner args so the ephemeral OIDC token scope matches the
+scan. Keep properties and workflow args aligned; do not invent a second
+analysis mode.
 
 ## Coverage
 
@@ -71,19 +112,8 @@ bash scripts/ci/run-sonar-coverage.sh
 ```
 
 Historical audio goldens are not regenerated and are not required for this
-coverage path.
-
-## GitHub token setup
-
-1. In SonarQube Cloud, create an analysis token with permission to analyze this
-   project.
-2. Add it as repository secret `SONAR_TOKEN` on
-   `montronedsp/gardenia-ambika-core`.
-3. Do not put the token in YAML, properties, logs, or remotes.
-
-Fork pull requests do not receive the secret. The Sonar job is skipped for
-forks (`pull_request_target` is not used). Compiler and REUSE workflows still
-run.
+coverage path. Do not invent coverage percentages or exclude DSP sources merely
+to improve the Quality Gate.
 
 ## Quality gate
 
@@ -97,13 +127,14 @@ Prefer Clean as You Code on new code:
   baseline is established)
 
 Profile and gate edits require SonarCloud admin access and are documented as
-admin steps when the token holder cannot change them from CI.
+admin steps when the session cannot change them from CI.
 
 ## Local reproduction
 
 **Linux (canonical Cloud submission):** follow the compilation-database and
-coverage commands above, then run the SonarScanner CLI with `SONAR_TOKEN` set
-and the same property file.
+coverage commands above. Local SonarScanner CLI submission still needs a
+developer analysis token; GitHub Actions uses OIDC instead and must not depend
+on a repository `SONAR_TOKEN` secret.
 
 **Windows workstation:** keep mission builds under
 `Z:\MontroneDSP_Studio_Builds`. Visual Studio multi-config generators do not
@@ -123,10 +154,16 @@ coverage XML.
 | No C/C++ units analyzed | Inspect `validate-compile-commands.py` output and scanner CFamily logs |
 | Coverage report missing | Ensure `run-sonar-coverage.sh` wrote a non-empty `coverage-sonar.xml` |
 | Automatic analysis conflicts | Disable Automatic Analysis for this project |
-| Fork PR skipped | Expected; secrets are withheld from forks |
-| Token missing | Configure `SONAR_TOKEN` and re-run |
+| Fork PR skipped | Expected; OIDC `id-token: write` is withheld from forks |
+| `No GitHub OIDC token is available` | Job missing `id-token: write`, or forked PR |
+| `Access denied` on auth action | Organization has not enabled Secretless analysis for GitHub Actions |
+| Repository not bound | Bind the GitHub repo to the SonarQube project via GitHub integration |
+| Project key mismatch | Confirm `montronedsp_gardenia-ambika-core` is bound to this repository |
+| HTTP 403 after successful exchange | Organization IP allow-list excludes the runner |
 
 ## Related docs
 
 - [CI.md](CI.md) — Windows/Linux compiler qualification
 - [REUSE.toml](../REUSE.toml) — SPDX annotations for new workflow/scripts
+- [SonarSource secretless GitHub docs](https://docs.sonarsource.com/sonarqube-cloud/analyzing-source-code/ci-based-analysis/github-actions-for-sonarcloud/secretless-github)
+- [sonarqube-auth-action](https://github.com/SonarSource/sonarqube-auth-action)

@@ -21,8 +21,12 @@ jobs:
     name: Clang compile-commands + coverage + scan
     runs-on: ubuntu-24.04
     timeout-minutes: 60
-    # Fork PRs do not receive repository secrets. Skip authenticated scanning
-    # rather than using pull_request_target with untrusted code.
+    permissions:
+      contents: read
+      id-token: write
+    # Fork PRs do not receive id-token: write for OIDC exchange. Skip Sonar
+    # analysis rather than using pull_request_target with untrusted code.
+    # Compiler and other qualification workflows still run on forks.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
@@ -69,22 +73,23 @@ jobs:
       - name: Build instrumented coverage and export Sonar XML
         run: bash scripts/ci/run-sonar-coverage.sh
 
-      - name: Require SONAR_TOKEN for authenticated analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          if [ -z "${SONAR_TOKEN}" ]; then
-            echo "SONAR_TOKEN is not configured for this repository."
-            echo "Add a SonarQube Cloud analysis token as GitHub Actions secret SONAR_TOKEN."
-            echo "Disable Automatic Analysis for project montronedsp_gardenia-ambika-core before relying on CI scans."
-            exit 1
-          fi
+      - name: Authenticate to SonarQube Cloud
+        id: sonar-auth
+        uses: SonarSource/sonarqube-auth-action@b372e2c2930aadfcc4f4399446da1e12772709ad # v1.2
+        with:
+          project-key: montronedsp_gardenia-ambika-core
+          export-env: false
 
-      - name: SonarQube Cloud scan
+      - name: SonarQube Cloud CFamily scan
         uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4 # v8.5.0
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ steps.sonar-auth.outputs.sonar-token }}
+          SONAR_REGION: ${{ steps.sonar-auth.outputs.sonar-region }}
         with:
+          # Organization/project key also live in sonar-project.properties; pass
+          # OIDC-resolved values so the ephemeral token scope matches the scan.
           args: >
+            -Dsonar.organization=${{ steps.sonar-auth.outputs.organization }}
+            -Dsonar.projectKey=${{ steps.sonar-auth.outputs.project-key }}
             -Dsonar.cfamily.compile-commands=build/sonar/compile_commands.json
             -Dsonar.coverageReportPaths=build/coverage/coverage-sonar.xml

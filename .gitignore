@@ -1,0 +1,58 @@
+# Build trees
+/build/
+/build-*/
+/out/
+.vs/
+CMakeFiles/
+CMakeCache.txt
+Testing/
+cmake-build-*/
+build/abi/
+
+# Compiled / link artefacts
+*.obj
+*.o
+*.pdb
+*.ilk
+*.lib
+*.exp
+*.dll
+*.exe
+*.so
+*.dylib
+*.a
+
+# IDE / local
+*.user
+*.suo
+*.VC.db
+*.VC.opendb
+.idea/
+.vscode/
+
+# Cursor / AI development environment
+.cursor/
+.cursorrules
+.cursorignore
+.cursorindexingignore
+
+# Agent instructions and skills
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
+GEMINI.md
+**/GEMINI.md
+.agents/
+.agent/
+.codex/
+.claude/
+.skills/
+skills/
+SKILL.md
+**/SKILL.md
+
+# Test / generated
+*.log
+*.tmp
+*.temp

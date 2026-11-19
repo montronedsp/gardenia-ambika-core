@@ -41,4 +41,4 @@ jobs:
         shell: bash
         run: |
           ctest --test-dir build/strict --output-on-failure --no-tests=error \
-            -R '^(GardeniaCoreMixerTests|GardeniaCoreJuceScan|GardeniaCoreCompileSmoke|GardeniaCoreCApiSmokeTest|GardeniaCoreAbiLayoutTests|GardeniaCoreAbiInvalidInputTests)$'
+            -R '^(GardeniaCoreMixerTests|GardeniaCoreVoiceOrderingTests|GardeniaCoreJuceScan|GardeniaCoreCompileSmoke|GardeniaCoreCApiSmokeTest|GardeniaCoreAbiLayoutTests|GardeniaCoreAbiInvalidInputTests)$'

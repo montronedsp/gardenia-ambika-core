@@ -45,6 +45,30 @@ struct ScopedNoDenormals
 #endif
 };
 
+// Stable O(n^2) insertion sort for at most kVoices indices.
+// Prefer this over std::sort for the fixed 8-voice steal path: libstdc++
+// introsort false-positives -Warray-bounds when the live count equals capacity,
+// and insertion sort preserves relative order on equal note-on timestamps.
+template <typename Less>
+inline void stable_sort_indices_n (int* data, int n, Less less) noexcept
+{
+    if (n <= 1)
+        return;
+    if (n > kVoices)
+        n = kVoices;
+    for (int i = 1; i < n; ++i)
+    {
+        const int key = data[i];
+        int j = i;
+        while (j > 0 && less (key, data[j - 1]))
+        {
+            data[j] = data[j - 1];
+            --j;
+        }
+        data[j] = key;
+    }
+}
+
 inline float midi_velocity_roundtrip (float velocity) noexcept
 {
     // Match host float note-on reconstruction: byte * (1.0f / 127.0f), not (float)byte / 127.0f.
@@ -280,7 +304,7 @@ struct StageARender
             if (juceVoiceActive (i))
                 order[static_cast<size_t> (n++)] = i;
 
-        std::sort (order.begin(), order.begin() + n, [&] (int a, int b) {
+        stable_sort_indices_n (order.data(), n, [&] (int a, int b) {
             return slots[static_cast<size_t> (a)].noteOnTime < slots[static_cast<size_t> (b)].noteOnTime;
         });
 
@@ -561,7 +585,8 @@ struct StageARender
 
     void render (uint32_t totalSamples, const std::vector<TimedEvent>& events)
     {
-        ScopedNoDenormals noDenormals;
+        // RAII MXCSR guard on MSVC; trivial elsewhere — keep lifetime for scope.
+        [[maybe_unused]] ScopedNoDenormals noDenormals;
 
         static constexpr int kMinimumSubBlockSize = 32;
         static constexpr bool kSubBlockSubdivisionIsStrict = false;

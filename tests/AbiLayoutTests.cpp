@@ -38,11 +38,11 @@ int main()
     const std::size_t outSz = sizeof(gardenia_core_voice_output);
     const std::size_t fuzzSz = sizeof(gardenia_core_fuzz_io);
 
-    if (createSz < 64 || snapSz < GARDENIA_CORE_PATCH_BLOB_BYTES)
-    {
-        std::cerr << "FAIL unexpected struct sizes\n";
-        return 1;
-    }
+    static_assert (sizeof (gardenia_core_create_config) >= 64,
+                   "Unexpected create_config layout");
+    static_assert (sizeof (gardenia_core_synthesis_snapshot)
+                       >= GARDENIA_CORE_PATCH_BLOB_BYTES,
+                   "Unexpected synthesis_snapshot layout");
 
 #ifdef GARDENIA_CORE_BUILD_DIR
     {

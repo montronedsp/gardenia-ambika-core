@@ -439,16 +439,8 @@ public:
     {
         return filterBypass_;
     }
-    
-    
-    bool isAnalogModelingEnabled() const
-    {
-    }
-    
-    
-    bool isDigitalArtifactsEnabled() const
-    {
-    }
+    // Deprecated unused Analog/90s getters were empty non-void stubs and are removed.
+
 
     void setFilterEnvMultiplier(int multiplier)
     {

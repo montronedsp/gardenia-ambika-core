@@ -612,6 +612,8 @@ private:
 
             uint8_t xIdx = getPatchForRead().modifier[i].operands[0];
             uint8_t yIdx = getPatchForRead().modifier[i].operands[1];
+            if (xIdx >= MOD_SRC_LAST || yIdx >= MOD_SRC_LAST)
+                continue;
             float x = modulationSources_[xIdx];
             float y = modulationSources_[yIdx];
             uint8_t op = getPatchForRead().modifier[i].op;
@@ -686,6 +688,32 @@ private:
         dst_[MOD_DST_LFO_4] = getPatchForRead().voice_lfo_rate / 127.0f;
     }
 
+    float vcaModulationGain() const
+    {
+        float gain = 1.0f;
+        for (int i = 0; i < kNumModulations; ++i)
+        {
+            const uint8_t source = getPatchForRead().modulation[i].source;
+            const uint8_t destination = getPatchForRead().modulation[i].destination;
+            const int8_t amount = getPatchForRead().modulation[i].amount;
+            if (destination != MOD_DST_VCA || amount == 0 || source >= MOD_SRC_LAST)
+                continue;
+
+            const float magnitude = amount < 0 ? -static_cast<float>(amount) : static_cast<float>(amount);
+            float depth = magnitude / 63.0f;
+            if (i == kNumModulations - 1)
+                depth *= modulationSources_[MOD_SRC_WHEEL];
+            if (depth > 1.0f)
+                depth = 1.0f;
+
+            float shaped = modulationSources_[source];
+            if (amount < 0)
+                shaped = 1.0f - shaped;
+            gain *= (1.0f - depth) + depth * shaped;
+        }
+        return gain;
+    }
+
     void processModulationMatrix()
     {
         for (int i = 0; i < kNumModulations; ++i)
@@ -695,16 +723,17 @@ private:
             int8_t amount = getPatchForRead().modulation[i].amount; // -63 to +63
             
             // Skip if no modulation assigned
-            if (amount == 0 || source >= MOD_SRC_LAST || destination >= MOD_DST_LAST)
+            if (amount == 0 || source >= MOD_SRC_LAST || destination >= MOD_DST_LAST
+                || destination == MOD_DST_VCA)
                 continue;
             
             // Convert amount to normalized range (-1.0 to +1.0)
             float normalizedAmount = amount / 63.0f;
             
-            // Special case: last slot is affected by mod wheel
+            // Last slot follows the wheel from 0 to full depth. Wheel is already 0..1.
             if (i == kNumModulations - 1)
             {
-                normalizedAmount *= modulationSources_[MOD_SRC_WHEEL] * 2.0f;
+                normalizedAmount *= modulationSources_[MOD_SRC_WHEEL];
             }
             
             float sourceValue = modulationSources_[source];
@@ -751,7 +780,8 @@ private:
             int8_t amount = getPatchForRead().modulation[i].amount; // -63 to +63
             
             // Skip if no modulation assigned
-            if (amount == 0 || source >= MOD_SRC_LAST || destination >= MOD_DST_LAST)
+            if (amount == 0 || source >= MOD_SRC_LAST || destination >= MOD_DST_LAST
+                || destination == MOD_DST_VCA)
                 continue;
             
             // Only recalculate per-sample destinations
@@ -773,7 +803,7 @@ private:
             // Special case: last slot is affected by mod wheel
             if (i == kNumModulations - 1)
             {
-                normalizedAmount *= modulationSources_[MOD_SRC_WHEEL] * 2.0f;
+                normalizedAmount *= modulationSources_[MOD_SRC_WHEEL];
             }
             
             float sourceValue = modulationSources_[source];
@@ -1164,7 +1194,7 @@ private:
 
             smoothedFilterCutoff_ += kFilterSmoothingCoeff * (instantCutoff - smoothedFilterCutoff_);
 
-            float vcaLevel = baseVCA * envValue * velocity_;
+            float vcaLevel = baseVCA * vcaModulationGain() * envValue * velocity_;
             vcaLevel = gardenia_core::jlimit(0.0f, 1.0f, vcaLevel);
 
             if (stageABuffers_ != nullptr)

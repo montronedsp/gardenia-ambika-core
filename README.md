@@ -37,8 +37,9 @@ Build from source to produce the shared library
 
 Distributed under GPL-3.0-or-later.
 
-See [LICENSE](LICENSE) and
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+See [LICENSE](LICENSE),
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
+and [REUSE.toml](REUSE.toml) (REUSE 3.3 / SPDX).
 
 Based on the Ambika firmware by Emilie Gillet.
 This is an independent project and is not an official

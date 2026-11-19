@@ -1,0 +1,60 @@
+version = 1
+
+# Canonical GPL text shipped at the repository root.
+[[annotations]]
+path = ["LICENSE"]
+precedence = "override"
+SPDX-FileCopyrightText = "Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>"
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# WaveEdit Online banks are CC0; keep this annotation disjoint from the GPL catch-all.
+[[annotations]]
+path = ["src/resources/WaveEditWavetableData.h"]
+precedence = "override"
+SPDX-FileCopyrightText = "WaveEdit Online contributors"
+SPDX-License-Identifier = "CC0-1.0"
+
+# Ambika-derived DSP, resources, and Ambika-named public headers.
+[[annotations]]
+path = [
+  "src/dsp/**",
+  "src/resources/AmbikaDistortionTable.h",
+  "src/resources/AmbikaVowelData.h",
+  "src/resources/AmbikaWavetableData.h",
+  "src/resources/ResourceAliases.h",
+  "include/gardenia_core/AmbikaFuzzProcessor.h",
+  "include/gardenia_core/AmbikaMixer.h",
+  "include/gardenia_core/CoreVoice.h",
+]
+precedence = "override"
+SPDX-FileCopyrightText = [
+  "2011 Emilie Gillet",
+  "2026 MontroneDSP",
+]
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# Remaining project files (MontroneDSP adaptations, ABI, tests, docs, build).
+[[annotations]]
+path = [
+  ".github/**",
+  ".gitignore",
+  "BUILDING.md",
+  "CMakeLists.txt",
+  "README.md",
+  "THIRD_PARTY_NOTICES.md",
+  "docs/**",
+  "include/gardenia_core/CutoffControlMapping.h",
+  "include/gardenia_core/Patch.h",
+  "include/gardenia_core/TempoSync.h",
+  "include/gardenia_core/gardenia_core.h",
+  "include/gardenia_core/gardenia_core_math.h",
+  "include/gardenia_core/gardenia_core_types.h",
+  "include/gardenia_core/gardenia_core_version.h",
+  "scripts/**",
+  "src/api/**",
+  "src/internal/**",
+  "tests/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 MontroneDSP"
+SPDX-License-Identifier = "GPL-3.0-or-later"

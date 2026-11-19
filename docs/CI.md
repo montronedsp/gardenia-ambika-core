@@ -32,3 +32,13 @@ the authoritative Release reference.
 
 CI artifacts are unsigned diagnostic outputs, not published customer releases.
 Other operating systems are not claimed to be qualified by this Windows workflow.
+
+## REUSE / SPDX
+
+A separate `reuse` job on `ubuntu-latest` runs `reuse lint` against
+[REUSE.toml](../REUSE.toml) and the license texts under `LICENSES/`.
+Locally (Python 3 + the `reuse` package):
+
+```powershell
+python -m reuse lint
+```

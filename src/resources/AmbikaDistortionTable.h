@@ -1,4 +1,6 @@
-// Copyright 2011 Emilie Gillet. GPL-3.0-or-later.
+// SPDX-FileCopyrightText: 2011 Emilie Gillet
+// SPDX-FileCopyrightText: 2026 MontroneDSP
+// SPDX-License-Identifier: GPL-3.0-or-later
 // Extracted from Ambika voicecard/resources.cc::wav_res_distortion
 // Upstream Ambika revision: 2c4a6908f373ea0d4191ef7355929691b87941ef
 #pragma once

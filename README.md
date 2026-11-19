@@ -1,5 +1,7 @@
 # Gardenia Ambika Core
 
+[![REUSE status](https://api.reuse.software/badge/github.com/montronedsp/gardenia-ambika-core)](https://api.reuse.software/info/github.com/montronedsp/gardenia-ambika-core)
+
 **Gardenia Ambika Core** is an open-source synthesis library
 based on Mutable Instruments Ambika, adapted and extended
 by MontroneDSP.

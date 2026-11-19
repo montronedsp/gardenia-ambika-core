@@ -83,6 +83,8 @@ if(MSVC)
 endif()
 add_test(NAME GardeniaCoreAbiGoldenTests COMMAND GardeniaCoreAbiGoldenTests)
 
+# These tests inspect Windows PE/DLL exports and require Win32 APIs.
+if(WIN32)
 add_executable(GardeniaCoreDynamicLibrarySmokeTest DynamicLibrarySmokeTest.cpp)
 target_include_directories(GardeniaCoreDynamicLibrarySmokeTest PRIVATE
     "${CMAKE_SOURCE_DIR}/include")
@@ -99,3 +101,4 @@ target_compile_definitions(GardeniaCoreSymbolAudit PRIVATE
     GARDENIA_CORE_DLL_DIR_DEBUG="${CMAKE_BINARY_DIR}/Debug")
 add_dependencies(GardeniaCoreSymbolAudit GardeniaCoreShared)
 add_test(NAME GardeniaCoreSymbolAudit COMMAND GardeniaCoreSymbolAudit)
+endif()

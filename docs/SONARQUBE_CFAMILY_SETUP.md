@@ -166,7 +166,7 @@ coverage XML.
 | Field | Value |
 | --- | --- |
 | Main SHA at branch point | `cee0c91e9591c213b079658d67f9a334910edb08` |
-| Workflow / docs SHA | `e9709fcd5d3f1de68f6f0f8e28bd41aa1e97aceb` (org-key follow-up may supersede) |
+| Workflow / docs SHA | `427651a4943375d1a1a496e56682719570371747` |
 | Auth action | `SonarSource/sonarqube-auth-action@b372e2c2930aadfcc4f4399446da1e12772709ad` (v1.2) |
 | Scanner action | `SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4` (v8.5.0) |
 | Scanner CLI (runner) | 8.4.0-build.16527 |

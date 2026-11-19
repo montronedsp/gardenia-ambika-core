@@ -40,16 +40,13 @@ int main()
             std::cout << "PASS bits crush varies\n";
     }
 
-    // Ambika distortion table present and center-ish
+    // Ambika distortion table present and center-ish (constexpr mid → static_assert avoids C4127)
     {
-        const auto mid = resources::kWavResDistortion[128];
-        if (mid < 100 || mid > 160)
-        {
-            std::cerr << "FAIL distortion table mid=" << int (mid) << "\n";
-            ++fail;
-        }
-        else
-            std::cout << "PASS Ambika wav_res_distortion imported mid=" << int (mid) << "\n";
+        static_assert (resources::kWavResDistortion.size() == 256);
+        static_assert (resources::kWavResDistortion[128] >= 100
+                       && resources::kWavResDistortion[128] <= 160);
+        std::cout << "PASS Ambika wav_res_distortion imported mid="
+                  << int (resources::kWavResDistortion[128]) << "\n";
     }
 
     std::cout << "MixerTests fail=" << fail << "\n";

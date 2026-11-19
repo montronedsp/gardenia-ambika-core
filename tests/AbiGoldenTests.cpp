@@ -118,7 +118,7 @@ struct SlotAllocator
         for (int i = 0; i < 8; ++i)
             if (slots[static_cast<size_t> (i)].envelopeLive)
                 order[static_cast<size_t> (n++)] = i;
-        std::sort (order.begin(), order.begin() + n, [&] (int a, int b) {
+        gardenia_core_test::stable_sort_indices_n (order.data(), n, [&] (int a, int b) {
             return slots[static_cast<size_t> (a)].noteOnTime < slots[static_cast<size_t> (b)].noteOnTime;
         });
         int low = -1, top = -1;

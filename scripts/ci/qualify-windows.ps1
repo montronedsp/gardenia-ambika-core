@@ -33,6 +33,7 @@ $golden = @(
 )
 $smoke = @(
     'GardeniaCoreMixerTests',
+    'GardeniaCoreVoiceOrderingTests',
     'GardeniaCoreJuceScan',
     'GardeniaCoreCompileSmoke',
     'GardeniaCoreCApiSmokeTest',
@@ -78,18 +79,18 @@ $missing = @($expected | Where-Object { $_ -notin $discovered })
 if ($missing.Count -gt 0) {
     throw "Required CTest targets missing: $($missing -join ', ')"
 }
-if ($Qualification -eq 'Full' -and $discovered.Count -ne 11) {
-    throw "Expected exactly 11 tests for full qualification, found $($discovered.Count)."
+if ($Qualification -eq 'Full' -and $discovered.Count -ne 12) {
+    throw "Expected exactly 12 tests for full qualification, found $($discovered.Count)."
 }
 if ($Qualification -eq 'Smoke') {
     $regex = '^(' + (($smoke | ForEach-Object { [regex]::Escape($_) }) -join '|') + ')$'
-    Invoke-Native 'Run 8 baseline-independent checks' @(
+    Invoke-Native 'Run 9 baseline-independent checks' @(
         'ctest', '--test-dir', $build, '-C', $Configuration,
         '--output-on-failure', '--no-tests=error', '-R', $regex
     )
 }
 else {
-    Invoke-Native 'Run all 11 CTest checks with genuine golden references' @(
+    Invoke-Native 'Run all 12 CTest checks with genuine golden references' @(
         'ctest', '--test-dir', $build, '-C', $Configuration,
         '--output-on-failure', '--no-tests=error'
     )

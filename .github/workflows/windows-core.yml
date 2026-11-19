@@ -1,0 +1,61 @@
+# SPDX-FileCopyrightText: 2026 MontroneDSP
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: Windows core build and qualification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gardenia-ambika-core-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows x64 / ${{ matrix.configuration }}
+    runs-on: windows-2022
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Release, Debug]
+    steps:
+      - name: Preserve source checkout line endings
+        shell: bash
+        run: git config --global core.autocrlf false
+
+      - name: Checkout
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Build and run baseline-independent qualification
+        shell: pwsh
+        run: |
+          ./scripts/ci/qualify-windows.ps1 -Configuration '${{ matrix.configuration }}' -Qualification Smoke
+
+      - name: Upload qualification log
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: qualification-${{ matrix.configuration }}-${{ github.sha }}
+          path: |
+            build/ci-${{ matrix.configuration }}/Testing/Temporary/LastTest.log
+            build/ci-${{ matrix.configuration }}/abi/gardenia-core-abi-v1.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload unsigned Release library
+        if: matrix.configuration == 'Release' && success()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: gardenia-core-windows-x64-${{ github.sha }}
+          path: build/ci-Release/Release/gardenia-core.dll
+          if-no-files-found: error
+          retention-days: 14

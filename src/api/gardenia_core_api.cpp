@@ -664,7 +664,7 @@ gardenia_core_process_stage_a (gardenia_core_instance* instance,
                 return GARDENIA_CORE_ERR_INVALID_EVENT;
         }
 
-        ScopedNoDenormals nd;
+        [[maybe_unused]] ScopedNoDenormals nd;
         gardenia_core_api::apply_snapshot_to_voices (instance->impl, *snapshot);
 
         if (num_samples == 0)
@@ -701,7 +701,7 @@ gardenia_core_process_stage_b_fuzz (gardenia_core_instance* instance,
 
     try
     {
-        ScopedNoDenormals nd;
+        [[maybe_unused]] ScopedNoDenormals nd;
 
         for (uint32_t i = 0; i < voice_io_count; ++i)
         {

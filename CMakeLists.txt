@@ -15,6 +15,24 @@ if(NOT MSVC)
     set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 endif()
 
+
+# Project-owned source and tests must compile warning-clean on every supported
+# compiler. No blanket suppression or silent configuration-specific exemption.
+option(GARDENIA_WARNINGS_AS_ERRORS "Treat all warnings in Gardenia Ambika Core targets as errors" ON)
+function(gardenia_core_warnings target)
+    if(NOT GARDENIA_WARNINGS_AS_ERRORS)
+        message(FATAL_ERROR "Strict warning enforcement is required for this project")
+    endif()
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /W4 /WX)
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        target_compile_options(${target} PRIVATE
+            -Wall -Wextra -Wpedantic -Werror)
+    else()
+        message(FATAL_ERROR "Unqualified compiler: ${CMAKE_CXX_COMPILER_ID}; configure strict warning policy before building")
+    endif()
+endfunction()
+
 set(GARDENIA_CORE_PUBLIC_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Internal static library (unit tests / header-only DSP link)
@@ -100,3 +118,25 @@ endif()
 
 enable_testing()
 add_subdirectory(tests)
+
+# Include all library and test targets in the same strict warning policy.
+foreach(_gardenia_target
+    GardeniaCoreStatic
+    GardeniaCoreShared
+    GardeniaCoreAbiStatic
+    GardeniaCoreFuzzGoldenTests
+    GardeniaCoreMixerTests
+    GardeniaCoreJuceScan
+    GardeniaCoreCompileSmoke
+    GardeniaCoreSynthesisGoldenTests
+    GardeniaCoreCApiSmokeTest
+    GardeniaCoreAbiLayoutTests
+    GardeniaCoreAbiInvalidInputTests
+    GardeniaCoreAbiGoldenTests
+    GardeniaCoreDynamicLibrarySmokeTest
+    GardeniaCoreSymbolAudit
+)
+    if(TARGET ${_gardenia_target})
+        gardenia_core_warnings(${_gardenia_target})
+    endif()
+endforeach()

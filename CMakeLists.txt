@@ -27,8 +27,7 @@ function(gardenia_core_warnings target)
         target_compile_options(${target} PRIVATE /W4 /WX)
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(${target} PRIVATE
-            $<$<COMPILE_LANGUAGE:C>:-Wall;-Wextra;-Wpedantic;-Werror>
-            $<$<COMPILE_LANGUAGE:CXX>:-Wall;-Wextra;-Wpedantic;-Werror>)
+            -Wall -Wextra -Wpedantic -Werror)
     else()
         message(FATAL_ERROR "Unqualified compiler: ${CMAKE_CXX_COMPILER_ID}; configure strict warning policy before building")
     endif()
